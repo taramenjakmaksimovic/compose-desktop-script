@@ -1,0 +1,2 @@
+Hello from Kotlin Script!
+Users: [User(id=1, name=User1), User(id=2, name=User2), User(id=3, name=User3), User(id=4, name=User4), User(id=5, name=User5)]

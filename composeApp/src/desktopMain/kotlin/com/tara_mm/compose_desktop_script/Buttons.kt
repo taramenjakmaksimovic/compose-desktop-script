@@ -1,0 +1,67 @@
+package com.tara_mm.compose_desktop_script
+
+import androidx.compose.runtime.MutableState
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
+
+
+object Buttons {
+    private var process: Process? = null
+    fun executeScript(
+        script: String,
+        outputText: MutableState<String>,
+        isRunning: MutableState<Boolean>,
+        lastExitCode: MutableState<Int?>) {
+        try {
+            val tempDir = System.getProperty("java.io.tmpdir")
+            val scriptName = "foo"
+            val scriptFile = File(tempDir, "$scriptName.kts")
+
+            if (scriptFile.exists()) {
+                scriptFile.delete()
+            }
+
+            scriptFile.createNewFile()
+            scriptFile.writeText(script)
+
+
+            val command = listOf("kotlinc", "-script", scriptFile.absolutePath)
+            isRunning.value = true
+
+            Thread {
+                try {
+                    process = ProcessBuilder(command)
+                        .redirectErrorStream(true)
+                        .start()
+
+                    val reader = BufferedReader(InputStreamReader(process!!.inputStream))
+                    var line: String?
+                    while (reader.readLine().also { line = it } != null) {
+                        outputText.value += line + "\n"
+                    }
+
+                    val exitCode = process?.waitFor()
+                    isRunning.value = false
+                    lastExitCode.value = exitCode
+                    outputText.value += "Script finished with exit code: $exitCode\n"
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    isRunning.value = false
+                    lastExitCode.value = -1
+
+                    outputText.value = "Error: ${e.message}"
+                } finally {
+                    scriptFile.delete()
+                }
+            }.start()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            isRunning.value = false
+            lastExitCode.value = -1
+            outputText.value = "Error: ${e.message}"
+        }
+    }
+}
