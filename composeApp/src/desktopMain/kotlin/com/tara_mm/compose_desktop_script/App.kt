@@ -193,20 +193,23 @@ fun outputPane(
                 verticalArrangement = Arrangement.Top
             ) {
                 Text("Execution output:", fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(16.dp))
 
                 if (isRunning.value) {
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(70.dp)
+                        )
                     }
                 }
 
-                lines.forEachIndexed { _, line ->
-                    val matchResult = errorRegex.find(line)
-                    if (matchResult != null) {
-                        val (filePath, lineNum, colNum, errorMessage) = matchResult.destructured
+                lines.forEach { line ->
+                    val match = errorRegex.find(line)
+                    if (match != null) {
+                        val (filePath, lineNum, colNum, errorMessage) = match.destructured
                         val errorLocation = "$filePath:$lineNum:$colNum"
 
                         Text(
