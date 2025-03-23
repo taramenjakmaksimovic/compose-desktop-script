@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.rememberScrollbarAdapter as FoundationScrollbarAdapter
 
 @Composable
 fun editorPane(
@@ -29,7 +30,7 @@ fun editorPane(
     val scrollState = rememberScrollState()
     val keywords = listOf("val", "var", "fun", "class", "if", "else", "for", "when", "return", "try", "catch",
         "throw", "package", "import", "finally", "private", "public", "object", "null", "do", "while", "break", "continue")
-    val keywordColor = Color.Magenta
+    val keywordColor = Purple
     val errorMessages = remember { mutableStateOf(mutableMapOf<Int, String>()) }
     val textFieldValue = remember { mutableStateOf(TextFieldValue(editorText.value)) }
     val errorLine = remember { mutableStateOf(-1) }
@@ -99,21 +100,26 @@ fun editorPane(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text("Enter your Kotlin script:", fontWeight = FontWeight.Bold)
-
+        Text(
+            "Enter your Kotlin script:",
+            fontWeight = FontWeight.Bold,
+            color = DarkPurple
+        )
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = if (cursorPosition.value.second is String)
-                "Cursor Position: Line ${cursorPosition.value.first} - Error: ${cursorPosition.value.second}"
+                "Cursor Position: Line ${cursorPosition.value.first} \n" +
+                        "Error: ${cursorPosition.value.second}"
             else
                 "Cursor Position: Line ${cursorPosition.value.first}",
-            color = if (cursorPosition.value.second is String) Color.Red else Color.Gray,
+            color = if (cursorPosition.value.second is String) Color.Red else LightPurple,
             fontSize = 12.sp
         )
 
         Box(
             modifier = Modifier
                 .weight(1f)
-                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+                .border(1.dp, DarkPurple, RoundedCornerShape(4.dp))
                 .background(Color.White)
                 .verticalScroll(scrollState)
                 .padding(8.dp)
@@ -141,21 +147,39 @@ fun editorPane(
                 outputText.value = ""
                 lastExitCode.value = null
                 onRun()
-            }) {
+            },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = DarkPurple,
+                    contentColor = Color.White
+                )
+            ) {
                 Text("Run")
 
             }
-            Button(onClick = {
+            Button(
+                onClick = {
                 editorText.value = ""
                 outputText.value = ""
                 textFieldValue.value = TextFieldValue("")
                 errorMessages.value = mutableMapOf()
                 errorLine.value = -1
                 cursorPosition.value = Pair(0, null)
-            }) {
+            },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = DarkPurple,
+                    contentColor = Color.White
+                )
+
+            ) {
                 Text("Delete")
             }
-            Button(onClick = onExit) {
+            Button(
+                onClick = onExit,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = DarkPurple,
+                    contentColor = Color.White
+                )
+                ) {
                 Text("Exit")
             }
         }
@@ -192,7 +216,11 @@ fun outputPane(
                     .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.Top
             ) {
-                Text("Execution output:", fontWeight = FontWeight.Bold)
+                Text(
+                    "Execution output:",
+                    fontWeight = FontWeight.Bold,
+                    color = DarkPurple
+                )
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (isRunning.value) {
@@ -201,7 +229,8 @@ fun outputPane(
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(70.dp)
+                            modifier = Modifier.size(70.dp),
+                            color = DarkPurple
                         )
                     }
                 }
@@ -231,7 +260,8 @@ fun outputPane(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .fillMaxHeight(),
-                adapter = rememberScrollbarAdapter(scrollState)
+                adapter = FoundationScrollbarAdapter(
+                    scrollState)
             )
         }
 
