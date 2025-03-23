@@ -12,7 +12,9 @@ object Buttons {
         script: String,
         outputText: MutableState<String>,
         isRunning: MutableState<Boolean>,
-        lastExitCode: MutableState<Int?>) {
+        lastExitCode: MutableState<Int?>,
+        executionTime: MutableState<String>
+        ) {
         try {
             val tempDir = System.getProperty("java.io.tmpdir")
             val scriptName = "foo"
@@ -28,9 +30,11 @@ object Buttons {
 
             val command = listOf("kotlinc", "-script", scriptFile.absolutePath)
             isRunning.value = true
+            executionTime.value = ""
 
             Thread {
                 try {
+                    val startTime = System.currentTimeMillis()
                     process = ProcessBuilder(command)
                         .redirectErrorStream(true)
                         .start()
@@ -44,13 +48,23 @@ object Buttons {
                     val exitCode = process?.waitFor()
                     isRunning.value = false
                     lastExitCode.value = exitCode
+
+
+                    outputText.value+="\n"
                     outputText.value += "Script finished with exit code: $exitCode\n"
+                    if (exitCode == 0) {
+                        val endTime = System.currentTimeMillis()
+                        val duration = endTime - startTime
+                        val seconds = duration / 1000
+                        val milliseconds = duration % 1000
+                        outputText.value += "Execution time: ${seconds}s ${milliseconds}ms\n"
+                    }
 
                 } catch (e: Exception) {
                     e.printStackTrace()
                     isRunning.value = false
                     lastExitCode.value = -1
-
+                    executionTime.value = ""
                     outputText.value = "Error: ${e.message}"
                 } finally {
                     scriptFile.delete()
@@ -61,6 +75,7 @@ object Buttons {
             e.printStackTrace()
             isRunning.value = false
             lastExitCode.value = -1
+            executionTime.value = ""
             outputText.value = "Error: ${e.message}"
         }
     }

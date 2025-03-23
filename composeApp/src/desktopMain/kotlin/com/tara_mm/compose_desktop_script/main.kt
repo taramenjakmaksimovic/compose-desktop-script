@@ -13,6 +13,8 @@ fun main() = application {
     val isRunning = mutableStateOf(false)
     val lastExitCode = mutableStateOf<Int?>(null)
     val cursorPosition = mutableStateOf<Pair<Int, Any?>>(Pair(0, 0))
+    val executionTime = mutableStateOf("")
+
 
     Window(
         onCloseRequest = ::exitApplication,
@@ -21,7 +23,7 @@ fun main() = application {
     ) {
         editorPane(
             editorText = scriptText,
-            onRun = { executeScript(scriptText.value, outputText, isRunning, lastExitCode) },
+            onRun = { executeScript(scriptText.value, outputText, isRunning, lastExitCode, executionTime) },
             onExit = { exitApplication() },
             cursorPosition = cursorPosition,
             outputText = outputText,
@@ -39,10 +41,7 @@ fun main() = application {
             outputText = outputText,
             isRunning = isRunning,
             lastExitCode = lastExitCode,
-            onDelete = {
-                outputText.value = ""
-                lastExitCode.value = null
-            },
+            executionTime,
             cursorPosition = cursorPosition
         )
     }

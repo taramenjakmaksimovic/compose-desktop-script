@@ -167,7 +167,7 @@ fun outputPane(
     outputText: MutableState<String>,
     isRunning: MutableState<Boolean>,
     lastExitCode: MutableState<Int?>,
-    onDelete: () -> Unit,
+    executionTime: MutableState<String>,
     cursorPosition: MutableState<Pair<Int, Any?>>
 ) {
     val errorRegex = """(.+):(\d+):(\d+): error: (.+)""".toRegex()
@@ -246,13 +246,11 @@ fun outputPane(
             }
         }
 
-        Button(
-            onClick = onDelete,
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Text("Delete output")
+        if (executionTime.value.isNotEmpty()) {
+            Text(
+                executionTime.value,
+                modifier = Modifier.padding(top = 8.dp)
+            )
         }
     }
 }
