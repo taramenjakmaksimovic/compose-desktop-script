@@ -255,15 +255,23 @@ fun outputPane(
                 }
             }
 
-
             VerticalScrollbar(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .fillMaxHeight(),
-                adapter = FoundationScrollbarAdapter(
-                    scrollState)
-            )
-        }
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .fillMaxHeight(),
+                    adapter = FoundationScrollbarAdapter(
+                        scrollState
+                    ),
+                    style = ScrollbarStyle(
+                        thickness = 6.dp,
+                        minimalHeight = 8.dp,
+                        hoverDurationMillis = 400,
+                        shape = RoundedCornerShape(4.dp),
+                        unhoverColor = LightPurple,
+                        hoverColor = DarkPurple
+                    )
+                )
+            }
 
         lastExitCode.value?.let { exitCode ->
             if (exitCode != 0) {
