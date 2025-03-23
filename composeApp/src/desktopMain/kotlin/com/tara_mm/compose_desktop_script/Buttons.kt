@@ -15,6 +15,13 @@ object Buttons {
         lastExitCode: MutableState<Int?>,
         executionTime: MutableState<String>
         ) {
+
+        if (script.isBlank()) {
+            outputText.value = "Your script is empty! Please enter a valid Kotlin script."
+            return
+        }
+        outputText.value = ""
+
         try {
             val tempDir = System.getProperty("java.io.tmpdir")
             val scriptName = "foo"

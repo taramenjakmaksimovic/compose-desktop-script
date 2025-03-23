@@ -41,7 +41,7 @@ fun main() = application {
             outputText = outputText,
             isRunning = isRunning,
             lastExitCode = lastExitCode,
-            executionTime,
+            executionTime = executionTime,
             cursorPosition = cursorPosition
         )
     }
