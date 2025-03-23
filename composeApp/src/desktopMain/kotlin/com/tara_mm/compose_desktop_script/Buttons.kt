@@ -39,6 +39,9 @@ object Buttons {
             isRunning.value = true
             executionTime.value = ""
 
+            val scriptSize = scriptFile.length()
+            val scriptSizeKB = scriptSize / 1024.0
+
             Thread {
                 try {
                     val startTime = System.currentTimeMillis()
@@ -66,6 +69,12 @@ object Buttons {
                         val milliseconds = duration % 1000
                         outputText.value += "Execution time: ${seconds}s ${milliseconds}ms\n"
                     }
+                    outputText.value += when {
+                        scriptSize.toInt() == 1 -> "Temporary script file size: $scriptSize byte\n"
+                        scriptSize < 1024 -> "Temporary script file size: $scriptSize bytes\n"
+                        else -> "Temporary script file size: %.2f KB\n".format(scriptSizeKB)
+                    }
+
 
                 } catch (e: Exception) {
                     e.printStackTrace()
