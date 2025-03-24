@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
@@ -30,9 +31,17 @@ fun editorPane(
     lastExitCode: MutableState<Int?>
 ) {
     val scrollState = rememberScrollState()
-    val keywords = listOf("val", "var", "fun", "class", "if", "else", "for", "when", "return", "try", "catch",
-        "throw", "package", "import", "finally", "private", "public", "object", "null", "do", "while", "break", "continue")
+    val keywords = listOf(
+        "val", "var", "fun", "class",
+        "if", "else", "while", "for", "when",
+        "return", "try", "catch",
+        "throw", "package", "import",
+        "finally", "private", "public",
+        "object", "null", "do",
+        "while", "break", "continue"
+    )
     val keywordColor = Purple
+    val cursorColor = Color.Green
     val errorMessages = remember { mutableStateOf(mutableMapOf<Int, String>()) }
     val textFieldValue = remember { mutableStateOf(TextFieldValue(editorText.value)) }
     val errorLine = remember { mutableStateOf(-1) }
@@ -142,7 +151,7 @@ fun editorPane(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .border(1.dp, DarkPurple, RoundedCornerShape(4.dp))
+                .border(2.dp, DarkPurple, RoundedCornerShape(4.dp))
                 .background(Color.White)
                 .verticalScroll(scrollState)
                 .padding(8.dp)
@@ -154,7 +163,10 @@ fun editorPane(
                         textFieldValue.value = newText
                         editorText.value = newText.text
                     },
-                    textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
+                    textStyle = TextStyle(
+                        color = Color.Black,
+                        fontSize = 16.sp
+                    ),
                     modifier = Modifier.fillMaxSize(),
                     visualTransformation = visualTransformation
                 )
