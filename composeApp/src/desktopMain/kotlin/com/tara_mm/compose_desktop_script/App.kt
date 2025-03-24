@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
@@ -60,40 +61,61 @@ fun editorPane(
         }
     }
 
-
+    val commentColor = Color.Gray
     val visualTransformation = VisualTransformation { text ->
         val newString = buildAnnotatedString {
             var currentIndex = 0
-            while (currentIndex < text.text.length) {
-                var foundKeyword = false
+            val textValue = text.text
+
+            while (currentIndex < textValue.length) {
+                var foundMatch = false
+
                 for (keyword in keywords) {
                     val regex = "\\b$keyword\\b".toRegex()
-                    val match = regex.find(text.text, currentIndex)
+                    val match = regex.find(textValue, currentIndex)
 
                     if (match != null && match.range.first == currentIndex) {
                         val endIndex = currentIndex + keyword.length
                         withStyle(style = SpanStyle(color = keywordColor, fontWeight = FontWeight.Bold)) {
-                            append(text.text.substring(currentIndex, endIndex))
+                            append(textValue.substring(currentIndex, endIndex))
                         }
                         currentIndex = endIndex
-                        foundKeyword = true
+                        foundMatch = true
                         break
                     }
                 }
-                if (!foundKeyword) {
-                    val lines = text.text.lines()
-                    val currentLineNumber = lines.take(currentIndex).size + 1
-                    if (currentLineNumber == errorLine.value) {
-                        withStyle(style = SpanStyle(background = Color(0xFFFFCDD2))) {
-                            append(text.text[currentIndex])
+
+                if (!foundMatch) {
+                    val singleLineCommentMatch = "//.*".toRegex().find(textValue, currentIndex)
+                    if (singleLineCommentMatch != null && singleLineCommentMatch.range.first == currentIndex) {
+                        val endIndex = singleLineCommentMatch.range.last + 1
+                        withStyle(style = SpanStyle(color = commentColor, fontStyle = FontStyle.Italic)) {
+                            append(textValue.substring(currentIndex, endIndex))
                         }
-                    } else {
-                        append(text.text[currentIndex])
+                        currentIndex = endIndex
+                        foundMatch = true
                     }
+                }
+
+                if (!foundMatch) {
+                    val multiLineCommentMatch = "/\\*.*?\\*/".toRegex(RegexOption.DOT_MATCHES_ALL).find(textValue, currentIndex)
+                    if (multiLineCommentMatch != null && multiLineCommentMatch.range.first == currentIndex) {
+                        val endIndex = multiLineCommentMatch.range.last + 1
+                        withStyle(style = SpanStyle(color = commentColor, fontStyle = FontStyle.Italic)) {
+                            append(textValue.substring(currentIndex, endIndex))
+                        }
+                        currentIndex = endIndex
+                        foundMatch = true
+                    }
+                }
+
+                if (!foundMatch) {
+                    append(textValue[currentIndex])
                     currentIndex++
                 }
             }
         }
+
         TransformedText(newString, OffsetMapping.Identity)
     }
 
