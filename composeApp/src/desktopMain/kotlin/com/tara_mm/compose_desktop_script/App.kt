@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import androidx.compose.foundation.rememberScrollbarAdapter as FoundationScrollbarAdapter
 
 @Composable
@@ -198,6 +199,18 @@ fun outputPane(
     val scrollState = rememberScrollState()
 
     val lines = outputText.value.lines()
+    var progressText by remember { mutableStateOf("In progress.") }
+
+    LaunchedEffect(isRunning.value){
+        while (isRunning.value) {
+            delay(550L)
+            progressText = when (progressText){
+                "In progress." -> "In progress.."
+                "In progress.." -> "In progress..."
+                else -> "In progress."
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -224,16 +237,23 @@ fun outputPane(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (isRunning.value) {
-                    Box(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(70.dp),
                             color = DarkPurple
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = progressText,
+                            color = DarkPurple,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
+
 
                 lines.forEach { line ->
                     val match = errorRegex.find(line)
