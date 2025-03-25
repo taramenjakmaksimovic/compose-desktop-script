@@ -1,13 +1,18 @@
 package com.tara_mm.compose_desktop_script
 
+
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
 import com.tara_mm.compose_desktop_script.Buttons.executeScript
 
@@ -26,27 +31,51 @@ fun main() = application {
         Window(
             onCloseRequest = ::exitApplication,
             title = "ComposeDesktopScript Home",
-            state = WindowState(position = WindowPosition(500.dp, 250.dp), width = 400.dp, height = 300.dp)
+            state = WindowState(
+                position = WindowPosition(500.dp, 250.dp),
+                width = 500.dp,
+                height = 500.dp
+            )
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
+                    .background(LightPurple)
                     .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Button(
-                    onClick = {
-                        showEditor.value = true
-                        showHomePage.value = false
+                Text(
+                    text = "Welcome to ComposeDesktopScript!",
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    modifier = Modifier.padding(bottom = 48.dp)
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            showEditor.value = true
+                            showHomePage.value = false
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = DarkPurple,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Start")
                     }
-                ) {
-                    Text("Start")
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = ::exitApplication
-                ) {
-                    Text("Exit")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = ::exitApplication,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = DarkPurple,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Exit")
+                    }
                 }
             }
         }
