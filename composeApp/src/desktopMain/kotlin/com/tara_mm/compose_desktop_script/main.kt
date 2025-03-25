@@ -1,11 +1,15 @@
 package com.tara_mm.compose_desktop_script
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.tara_mm.compose_desktop_script.Buttons.executeScript
-
-
 
 fun main() = application {
     val scriptText = mutableStateOf("")
@@ -14,35 +18,71 @@ fun main() = application {
     val lastExitCode = mutableStateOf<Int?>(null)
     val cursorPosition = mutableStateOf<Pair<Int, Any?>>(Pair(0, 0))
     val executionTime = mutableStateOf("")
+    val showEditor = remember { mutableStateOf(false) }
+    val showHomePage = remember { mutableStateOf(true) }
 
 
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "ComposeDesktopScript",
-        state = WindowState(position = WindowPosition(100.dp, 100.dp), width = 500.dp, height = 600.dp)
-    ) {
-        editorPane(
-            editorText = scriptText,
-            onRun = { executeScript(scriptText.value, outputText, isRunning, lastExitCode, executionTime) },
-            onExit = { exitApplication() },
-            cursorPosition = cursorPosition,
-            outputText = outputText,
-            lastExitCode = lastExitCode
-
-        )
+    if (showHomePage.value) {
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "ComposeDesktopScript Home",
+            state = WindowState(position = WindowPosition(500.dp, 250.dp), width = 400.dp, height = 300.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = {
+                        showEditor.value = true
+                        showHomePage.value = false
+                    }
+                ) {
+                    Text("Start")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = ::exitApplication
+                ) {
+                    Text("Exit")
+                }
+            }
+        }
     }
+    if (showEditor.value)
+    {
+        Window(
+           onCloseRequest = ::exitApplication,
+            title = "ComposeDesktopScript",
+            state = WindowState(position = WindowPosition(100.dp, 100.dp), width = 500.dp, height = 600.dp)
+        ) {
+            editorPane(
+                editorText = scriptText,
+                onRun = { executeScript(scriptText.value, outputText, isRunning, lastExitCode, executionTime) },
+                onExit = {
+                    exitApplication()
+                         },
+                cursorPosition = cursorPosition,
+                outputText = outputText,
+                lastExitCode = lastExitCode
 
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "ComposeDesktopScriptOutput",
-        state = WindowState(position = WindowPosition(650.dp, 100.dp), width = 500.dp, height = 600.dp)
-    ) {
-        outputPane(
-            outputText = outputText,
-            isRunning = isRunning,
-            lastExitCode = lastExitCode,
-            executionTime = executionTime,
-            cursorPosition = cursorPosition
-        )
+            )
+        }
+
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "ComposeDesktopScriptOutput",
+            state = WindowState(position = WindowPosition(650.dp, 100.dp), width = 500.dp, height = 600.dp)
+        ) {
+            outputPane(
+                outputText = outputText,
+                isRunning = isRunning,
+                lastExitCode = lastExitCode,
+                executionTime = executionTime,
+                cursorPosition = cursorPosition
+            )
+        }
     }
 }

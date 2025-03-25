@@ -41,7 +41,6 @@ fun editorPane(
         "while", "break", "continue"
     )
     val keywordColor = Purple
-    val cursorColor = Color.Green
     val errorMessages = remember { mutableStateOf(mutableMapOf<Int, String>()) }
     val textFieldValue = remember { mutableStateOf(TextFieldValue(editorText.value)) }
     val errorLine = remember { mutableStateOf(-1) }
