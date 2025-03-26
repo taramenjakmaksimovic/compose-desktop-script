@@ -296,14 +296,14 @@ fun outputPane(
             .padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Box(
+        Row(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .weight(1f)
                     .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.Top
             ) {
@@ -348,17 +348,19 @@ fun outputPane(
                             fontWeight = FontWeight.Bold
                         )
                     } else {
-                        Text(line)
+                        Text(
+                            line, color = if (line == "Your script is empty! Please enter a valid Kotlin script.")
+                            Color.Red else Color.Unspecified
+                        )
                     }
                 }
             }
 
             VerticalScrollbar(
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
                         .fillMaxHeight(),
                     adapter = FoundationScrollbarAdapter(
-                        scrollState
+                       scrollState
                     ),
                     style = ScrollbarStyle(
                         thickness = 6.dp,
