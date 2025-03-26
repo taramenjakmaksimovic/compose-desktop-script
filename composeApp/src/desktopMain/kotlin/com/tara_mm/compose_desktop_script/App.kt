@@ -296,9 +296,17 @@ fun outputPane(
             .padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
+        Text(
+            "Execution output:",
+            fontWeight = FontWeight.Bold,
+            color = DarkPurple
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier
                 .weight(1f)
+                .border(2.dp, DarkPurple, RoundedCornerShape(8.dp))
+                .padding(12.dp)
                 .fillMaxWidth()
         ) {
             Column(
@@ -307,13 +315,6 @@ fun outputPane(
                     .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.Top
             ) {
-                Text(
-                    "Execution output:",
-                    fontWeight = FontWeight.Bold,
-                    color = DarkPurple
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-
                 if (isRunning.value) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -331,7 +332,6 @@ fun outputPane(
                         )
                     }
                 }
-
 
                 lines.forEach { line ->
                     val match = errorRegex.find(line)
