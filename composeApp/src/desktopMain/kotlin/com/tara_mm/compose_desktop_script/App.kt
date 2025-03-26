@@ -349,8 +349,11 @@ fun outputPane(
                         )
                     } else {
                         Text(
-                            line, color = if (line == "Your script is empty! Please enter a valid Kotlin script.")
-                            Color.Red else Color.Unspecified
+                            line,
+                            color = if (line == "Your script is empty! Please enter a valid Kotlin script.")
+                                Color.Red else Color.Unspecified,
+                            fontWeight = if (line == "Your script is empty! Please enter a valid Kotlin script.")
+                                FontWeight.Bold else FontWeight.Normal
                         )
                     }
                 }
