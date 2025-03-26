@@ -222,10 +222,27 @@ fun editorPane(
         if (showExitDialog.value) {
             AlertDialog(
                 onDismissRequest = { showExitDialog.value = false },
-                title = { Text("Confirm exit") },
-                text = { Text("Do you really want to exit?") },
+                title = {
+                    Text(
+                    "Confirm exit",
+                    fontSize = 20.sp,
+                    color = Color.White
+                ) },
+                text = {
+                    Text(
+                        "Do you really want to exit?",
+                        fontSize = 16.sp,
+                        color = DarkPurple,
+                    ) },
+                backgroundColor  = LightPurple,
                 dismissButton = {
-                    Button(onClick = { showExitDialog.value = false }) {
+                    Button(
+                        onClick = { showExitDialog.value = false },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = DarkPurple,
+                            contentColor = Color.White
+                        )
+                        ) {
                         Text("No")
                     }
                 },
@@ -234,7 +251,11 @@ fun editorPane(
                         onClick = {
                             showExitDialog.value = false
                             onExit()
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = DarkPurple,
+                            contentColor = Color.White
+                        )
                     ) {
                         Text("Yes")
                     }
