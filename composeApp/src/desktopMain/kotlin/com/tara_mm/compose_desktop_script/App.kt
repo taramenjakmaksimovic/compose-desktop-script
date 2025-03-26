@@ -31,6 +31,7 @@ fun editorPane(
     lastExitCode: MutableState<Int?>
 ) {
     val scrollState = rememberScrollState()
+    val showExitDialog = remember { mutableStateOf(false) }
     val keywords = listOf(
         "val", "var", "fun", "class",
         "if", "else", "while", "for", "when",
@@ -208,7 +209,7 @@ fun editorPane(
                 Text("Delete")
             }
             Button(
-                onClick = onExit,
+                onClick = { showExitDialog.value = true },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = DarkPurple,
                     contentColor = Color.White
@@ -216,6 +217,29 @@ fun editorPane(
                 ) {
                 Text("Exit")
             }
+        }
+
+        if (showExitDialog.value) {
+            AlertDialog(
+                onDismissRequest = { showExitDialog.value = false },
+                title = { Text("Confirm exit") },
+                text = { Text("Do you really want to exit?") },
+                dismissButton = {
+                    Button(onClick = { showExitDialog.value = false }) {
+                        Text("No")
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showExitDialog.value = false
+                            onExit()
+                        }
+                    ) {
+                        Text("Yes")
+                    }
+                }
+            )
         }
     }
 }
