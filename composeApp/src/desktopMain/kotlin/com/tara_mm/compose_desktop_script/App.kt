@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
@@ -229,11 +230,12 @@ fun editorPane(
                     color = Color.White
                 ) },
                 text = {
-                    Text(
-                        "Do you really want to exit?",
-                        fontSize = 16.sp,
-                        color = DarkPurple,
-                    ) },
+                    animationText(
+                    inputText = "Do you really want to exit?",
+                    color = DarkPurple,
+                    fontSize = 16.sp,
+                    typingSpeed = 40L
+                )},
                 backgroundColor  = LightPurple,
                 dismissButton = {
                     Button(
@@ -394,4 +396,29 @@ fun outputPane(
             )
         }
     }
+}
+
+@Composable
+fun animationText(
+    inputText: String,
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit ,
+    color: Color,
+    typingSpeed: Long
+){
+    var visibleText by remember { mutableStateOf("") }
+    LaunchedEffect(inputText){
+        visibleText= ""
+        for(i in inputText.indices){
+            visibleText = inputText.substring(0, i + 1)
+            delay(typingSpeed)
+        }
+    }
+    Text(
+        text = visibleText,
+        fontSize = fontSize,
+        color = color,
+        modifier = modifier
+    )
+
 }

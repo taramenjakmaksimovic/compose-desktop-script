@@ -44,11 +44,12 @@ fun main() = application {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = "Welcome to ComposeDesktopScript!",
-                    fontSize = 20.sp,
+                animationText(
+                    "Welcome to ComposeDesktopScript!",
+                    modifier = Modifier.padding(bottom = 48.dp),
+                    fontSize = 25.sp,
                     color = Color.White,
-                    modifier = Modifier.padding(bottom = 48.dp)
+                    typingSpeed = 70L
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 Row(
