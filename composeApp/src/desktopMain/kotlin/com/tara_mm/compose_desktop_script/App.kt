@@ -353,15 +353,18 @@ fun outputPane(
                         Text(
                             line,
                             color = when {
-                                line == "Your script is empty! Please enter a valid Kotlin script." -> Color.Red
+                                line == "Your script is empty! Please enter a valid Kotlin script." ||
+                                line == "Script executed for more than 60 seconds."   -> Color.Red
                                 line.startsWith("Script finished with exit code:") ||
                                 line.startsWith("Execution time:") ||
                                 line.startsWith("Temporary script file size:") -> DarkPurple
                                 else -> Color.Unspecified
                             },
-                            fontWeight =
-                                if (line == "Your script is empty! Please enter a valid Kotlin script.")
-                                     FontWeight.Bold else FontWeight.Normal
+                            fontWeight = when {
+                                line == "Your script is empty! Please enter a valid Kotlin script." ||
+                                line == "Script executed for more than 60 seconds." -> FontWeight.Bold
+                                else -> FontWeight.Normal
+                            }
                         )
                     }
                 }
@@ -426,5 +429,4 @@ fun animationText(
         color = color,
         modifier = modifier
     )
-
 }
