@@ -352,10 +352,16 @@ fun outputPane(
                     } else {
                         Text(
                             line,
-                            color = if (line == "Your script is empty! Please enter a valid Kotlin script.")
-                                Color.Red else Color.Unspecified,
-                            fontWeight = if (line == "Your script is empty! Please enter a valid Kotlin script.")
-                                FontWeight.Bold else FontWeight.Normal
+                            color = when {
+                                line == "Your script is empty! Please enter a valid Kotlin script." -> Color.Red
+                                line.startsWith("Script finished with exit code:") ||
+                                line.startsWith("Execution time:") ||
+                                line.startsWith("Temporary script file size:") -> DarkPurple
+                                else -> Color.Unspecified
+                            },
+                            fontWeight =
+                                if (line == "Your script is empty! Please enter a valid Kotlin script.")
+                                     FontWeight.Bold else FontWeight.Normal
                         )
                     }
                 }
