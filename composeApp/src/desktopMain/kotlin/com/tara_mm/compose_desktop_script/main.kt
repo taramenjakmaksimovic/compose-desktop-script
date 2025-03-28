@@ -96,7 +96,8 @@ fun main() = application {
                          },
                 cursorPosition = cursorPosition,
                 outputText = outputText,
-                lastExitCode = lastExitCode
+                lastExitCode = lastExitCode,
+                isRunning = isRunning
 
             )
         }

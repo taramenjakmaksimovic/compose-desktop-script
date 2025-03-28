@@ -111,4 +111,16 @@ object Buttons {
                 outputText.value = "Error: ${e.message}"
             }
     }
+
+    fun abortExecution(
+        outputText: MutableState<String>,
+        isRunning: MutableState<Boolean>
+    ){
+        if(process!= null && process!!.isAlive) {
+            process?.destroy()
+            process = null
+            isRunning.value = false
+            outputText.value += "\nExecution aborted.\n"
+        }
+    }
 }

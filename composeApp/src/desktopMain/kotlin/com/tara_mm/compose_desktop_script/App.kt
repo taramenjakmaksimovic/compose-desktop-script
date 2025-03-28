@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tara_mm.compose_desktop_script.Buttons.abortExecution
 import kotlinx.coroutines.delay
 import androidx.compose.foundation.rememberScrollbarAdapter as FoundationScrollbarAdapter
 
@@ -29,7 +30,8 @@ fun editorPane(
     onExit: () -> Unit,
     cursorPosition: MutableState<Pair<Int, Any?>>,
     outputText: MutableState<String>,
-    lastExitCode: MutableState<Int?>
+    lastExitCode: MutableState<Int?>,
+    isRunning: MutableState<Boolean>
 ) {
     val scrollState = rememberScrollState()
     val showExitDialog = remember { mutableStateOf(false) }
@@ -190,6 +192,17 @@ fun editorPane(
                 )
             ) {
                 Text("Run")
+
+            }
+            Button(onClick = {
+                abortExecution(outputText, isRunning)
+            },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = DarkPurple,
+                    contentColor = Color.White
+                )
+            ) {
+                Text("Abort")
 
             }
             Button(
@@ -353,17 +366,22 @@ fun outputPane(
                         Text(
                             line,
                             color = when {
-                                line == "Your script is empty! Please enter a valid Kotlin script." ||
-                                line == "Script executed for more than 60 seconds."   -> Color.Red
-                                line.startsWith("Script finished with exit code:") ||
-                                line.startsWith("Execution time:") ||
-                                line.startsWith("Temporary script file size:") -> DarkPurple
-                                else -> Color.Unspecified
+                                        line == "Your script is empty! Please enter a valid Kotlin script." ||
+                                        line == "Execution aborted." ||
+                                        line == "Script executed for more than 60 seconds." -> Color.Red
+
+                                        line.startsWith("Script finished with exit code:") ||
+                                        line.startsWith("Execution time:") ||
+                                        line.startsWith("Temporary script file size:") -> DarkPurple
+
+                                        else -> Color.Unspecified
                             },
                             fontWeight = when {
-                                line == "Your script is empty! Please enter a valid Kotlin script." ||
-                                line == "Script executed for more than 60 seconds." -> FontWeight.Bold
-                                else -> FontWeight.Normal
+                                        line == "Your script is empty! Please enter a valid Kotlin script." ||
+                                        line == "Execution aborted." ||
+                                        line == "Script executed for more than 60 seconds." -> FontWeight.Bold
+
+                                        else -> FontWeight.Normal
                             }
                         )
                     }
