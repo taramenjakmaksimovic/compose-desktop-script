@@ -5,6 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,9 +50,34 @@ fun editorPane(
         "while", "break", "continue"
     )
     val keywordColor = Purple
+    val commentColor = Color.Gray
     val errorMessages = remember { mutableStateOf(mutableMapOf<Int, String>()) }
     val textFieldValue = remember { mutableStateOf(TextFieldValue(editorText.value)) }
     val errorLine = remember { mutableStateOf(-1) }
+    val undoList = remember { mutableListOf<String>() }
+    val redoList = remember { mutableListOf<String>() }
+
+    fun saveUndoState(){
+        undoList.add(editorText.value)
+        redoList.clear()
+        if (undoList.size > 30) undoList.removeAt(0)
+    }
+
+    fun undo(){
+        if (undoList.isNotEmpty()){
+            redoList.add(editorText.value)
+            editorText.value = undoList.removeLast()
+            textFieldValue.value = TextFieldValue(editorText.value)
+        }
+    }
+
+    fun redo(){
+        if (redoList.isNotEmpty()){
+            undoList.add(editorText.value)
+            editorText.value = redoList.removeLast()
+            textFieldValue.value = TextFieldValue(editorText.value)
+        }
+    }
 
     LaunchedEffect(cursorPosition.value) {
         val (line, error) = cursorPosition.value
@@ -73,7 +103,6 @@ fun editorPane(
         }
     }
 
-    val commentColor = Color.Gray
     val visualTransformation = VisualTransformation { text ->
         val newString = buildAnnotatedString {
             var currentIndex = 0
@@ -135,11 +164,37 @@ fun editorPane(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
         Text(
             "Enter your Kotlin script:",
             fontWeight = FontWeight.Bold,
             color = DarkPurple
         )
+            Row {
+                Button(
+                    onClick = { undo() },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = DarkPurple,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Undo")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { redo() },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = DarkPurple,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Redo")
+                }
+            }
+        }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = if (cursorPosition.value.second is String)
@@ -163,6 +218,7 @@ fun editorPane(
                 BasicTextField(
                     value = textFieldValue.value,
                     onValueChange = { newText ->
+                        saveUndoState()
                         textFieldValue.value = newText
                         editorText.value = newText.text
                     },
