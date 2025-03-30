@@ -1,0 +1,11 @@
+fun main() {
+    val x = 10
+    val y = "hello"
+
+    // Intentionally introduce an error here:
+    val z: Int = y // Trying to assign a String to an Int
+
+    println(x)
+    println(y)
+    println(z)
+}

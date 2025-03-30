@@ -1,0 +1,85 @@
+import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
+import kotlin.random.Random
+import kotlin.concurrent.thread
+
+// Function to generate a random number
+fun getRandomNumber(): Int {
+    return Random.nextInt(1, 100)
+}
+
+// Function to simulate a long-running task
+fun longRunningTask() {
+    println("Starting a long-running task...")
+    repeat(5) {
+        Thread.sleep(1000)
+        println("Processing... Step ${it + 1}/5")
+    }
+    println("Task completed!")
+}
+
+// Function to fetch data from a remote server (using a GET request)
+fun fetchDataFromServer(url: String): String {
+    val connection = URL(url).openConnection() as HttpURLConnection
+    connection.requestMethod = "GET"
+    val responseCode = connection.responseCode
+    return if (responseCode == HttpURLConnection.HTTP_OK) {
+        connection.inputStream.bufferedReader().readText()
+    } else {
+        "Error: $responseCode"
+    }
+}
+
+// Data class to represent a user
+data class User(val id: Int, val name: String)
+
+// Function to generate a list of users
+fun generateUsers(count: Int): List<User> {
+    return List(count) { User(it + 1, "User${it + 1}") }
+}
+
+// Writing data to a file
+fun writeFile(filename: String, content: String) {
+    val file = File(filename)
+    file.writeText(content)
+    println("Data written to file: $filename")
+}
+
+// Reading data from a file
+fun readFile(filename: String) {
+    val file = File(filename)
+    if (file.exists()) {
+        println("Reading from file: $filename")
+        println(file.readText())
+    } else {
+        println("File does not exist: $filename")
+    }
+}
+
+// Main execution
+println("=== Kotlin Script Execution Started ===")
+println("Current Time: ${java.time.LocalDateTime.now()}")
+println("Random Number: ${getRandomNumber()}")
+
+// Simulate network request
+val fetchDataResult = fetchDataFromServer("https://jsonplaceholder.typicode.com/posts/1")
+println("Fetched data from server: $fetchDataResult")
+
+// Generate users
+val users = generateUsers(5)
+println("Generated Users: $users")
+
+// Write users data to a file
+val filename = "sample_output.txt"
+writeFile(filename, "Hello from Kotlin Script!\nUsers: $users")
+
+// Read data from the file
+readFile(filename)
+
+// Start a long-running task in a separate thread
+thread(start = true) {
+    longRunningTask()
+}
+
+println("=== Kotlin Script Execution Finished ===")
