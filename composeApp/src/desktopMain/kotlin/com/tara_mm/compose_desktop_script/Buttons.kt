@@ -71,7 +71,7 @@ object Buttons {
                     if (processTimedOut) {
                         outputText.value +=
                             "\nScript executed for more than 60 seconds.\n"
-                        executionHistory.value.add("\nScript executed for more than 60 seconds.\n")
+                        executionHistory.value.add("Script executed for more than 60 seconds.\n")
                         isRunning.value = false
                     } else {
                         val exitCode = process?.waitFor()
@@ -88,7 +88,7 @@ object Buttons {
                             val duration = endTime - startTime
                             val seconds = duration / 1000
                             val milliseconds = duration % 1000
-                            outputText.value += "Execution time: ${seconds}s ${milliseconds}ms\n"
+                            outputText.value += "\nExecution time: ${seconds}s ${milliseconds}ms\n"
                             executionHistory.value.add("Execution time: ${seconds}s ${milliseconds}ms")
                         }
 
@@ -109,8 +109,7 @@ object Buttons {
                         lastExitCode.value = -1
                         executionTime.value = ""
                         outputText.value = "Error: ${e.message}"
-                        executionHistory.value.add("Error: ${e.message}")
-                        executionHistory.value.add("\n")
+                        executionHistory.value.add("Error: ${e.message}\n")
                     } finally {
                         scriptFile.delete()
                     }
@@ -122,20 +121,21 @@ object Buttons {
                 lastExitCode.value = -1
                 executionTime.value = ""
                 outputText.value = "Error: ${e.message}"
-                executionHistory.value.add("Error: ${e.message}")
-                executionHistory.value.add("\n")
+                executionHistory.value.add("Error: ${e.message}\n")
             }
     }
 
     fun abortExecution(
         outputText: MutableState<String>,
-        isRunning: MutableState<Boolean>
+        isRunning: MutableState<Boolean>,
+        executionHistory: MutableState<MutableList<String>>
     ){
         if(process!= null && process!!.isAlive) {
             process?.destroy()
             process = null
             isRunning.value = false
             outputText.value += "\nExecution aborted.\n"
+            executionHistory.value.add("Execution aborted.")
         }
     }
 }

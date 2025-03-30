@@ -250,7 +250,7 @@ fun editorPane(
 
             }
             Button(onClick = {
-                abortExecution(outputText, isRunning)
+                abortExecution(outputText, isRunning, executionHistory)
             },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = DarkPurple,

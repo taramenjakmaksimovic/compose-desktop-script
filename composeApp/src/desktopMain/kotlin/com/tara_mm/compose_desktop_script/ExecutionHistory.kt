@@ -28,7 +28,7 @@ fun executionHistoryWindow(
     if (showHistoryWindow.value) {
         Window(
             onCloseRequest = { showHistoryWindow.value = false },
-            title = "Execution History",
+            title = "Execution history",
             state = WindowState(
                 position = WindowPosition(100.dp, 100.dp),
                 width = 500.dp,
@@ -47,7 +47,11 @@ fun executionHistoryWindow(
                         .background(Color.White)
                         .padding(16.dp)
                 ) {
-                    Text("Execution History", fontWeight = FontWeight.Bold, color = DarkPurple)
+                    Text(
+                        "Execution history",
+                        fontWeight = FontWeight.Bold,
+                        color = DarkPurple
+                    )
                     Divider(modifier = Modifier.padding(vertical = 8.dp))
 
                     if (executionHistory.value.isEmpty()) {
