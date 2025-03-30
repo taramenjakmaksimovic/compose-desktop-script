@@ -25,6 +25,8 @@ fun main() = application {
     val executionTime = mutableStateOf("")
     val showEditor = remember { mutableStateOf(false) }
     val showHomePage = remember { mutableStateOf(true) }
+    val executionHistory = remember { mutableStateOf(mutableListOf<String>()) }
+    val showHistoryWindow = mutableStateOf(false)
 
 
     if (showHomePage.value) {
@@ -90,14 +92,23 @@ fun main() = application {
         ) {
             editorPane(
                 editorText = scriptText,
-                onRun = { executeScript(scriptText.value, outputText, isRunning, lastExitCode, executionTime) },
+                onRun = {
+                    executeScript(
+                        scriptText.value,
+                        outputText,
+                        isRunning,
+                        lastExitCode,
+                        executionTime,
+                        executionHistory
+                    ) },
                 onExit = {
                     exitApplication()
                          },
                 cursorPosition = cursorPosition,
                 outputText = outputText,
                 lastExitCode = lastExitCode,
-                isRunning = isRunning
+                isRunning = isRunning,
+                executionHistory = executionHistory
 
             )
         }
@@ -112,7 +123,9 @@ fun main() = application {
                 isRunning = isRunning,
                 lastExitCode = lastExitCode,
                 executionTime = executionTime,
-                cursorPosition = cursorPosition
+                cursorPosition = cursorPosition,
+                executionHistory = executionHistory,
+                showHistoryWindow = showHistoryWindow
             )
         }
     }

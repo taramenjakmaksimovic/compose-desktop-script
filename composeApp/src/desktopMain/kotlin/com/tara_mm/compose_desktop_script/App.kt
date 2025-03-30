@@ -8,8 +8,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +34,8 @@ fun editorPane(
     cursorPosition: MutableState<Pair<Int, Any?>>,
     outputText: MutableState<String>,
     lastExitCode: MutableState<Int?>,
-    isRunning: MutableState<Boolean>
+    isRunning: MutableState<Boolean>,
+    executionHistory: MutableState<MutableList<String>>
 ) {
     val scrollState = rememberScrollState()
     val showExitDialog = remember { mutableStateOf(false) }
@@ -342,7 +341,10 @@ fun outputPane(
     isRunning: MutableState<Boolean>,
     lastExitCode: MutableState<Int?>,
     executionTime: MutableState<String>,
-    cursorPosition: MutableState<Pair<Int, Any?>>
+    cursorPosition: MutableState<Pair<Int, Any?>>,
+    executionHistory: MutableState<MutableList<String>>,
+    showHistoryWindow: MutableState<Boolean>
+
 ) {
     val errorRegex = """(.+):(\d+):(\d+): error: (.+)""".toRegex()
     val scrollState = rememberScrollState()
@@ -461,6 +463,24 @@ fun outputPane(
                 )
             }
 
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(
+                onClick = { showHistoryWindow.value = !showHistoryWindow.value },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = DarkPurple,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text("Show execution history")
+            }
+        }
+
         lastExitCode.value?.let { exitCode ->
             if (exitCode != 0) {
                 Text(
@@ -478,6 +498,7 @@ fun outputPane(
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
+        executionHistoryWindow(showHistoryWindow, executionHistory)
     }
 }
 
