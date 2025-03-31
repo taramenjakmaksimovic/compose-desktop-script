@@ -35,7 +35,7 @@ fun editorPane(
     outputText: MutableState<String>,
     lastExitCode: MutableState<Int?>,
     isRunning: MutableState<Boolean>,
-    executionHistory: MutableState<MutableList<String>>
+    executionHistory: MutableState<MutableList<Pair<Long, List<String>>>>
 ) {
     val scrollState = rememberScrollState()
     val showExitDialog = remember { mutableStateOf(false) }
@@ -342,7 +342,7 @@ fun outputPane(
     lastExitCode: MutableState<Int?>,
     executionTime: MutableState<String>,
     cursorPosition: MutableState<Pair<Int, Any?>>,
-    executionHistory: MutableState<MutableList<String>>,
+    executionHistory: MutableState<MutableList<Pair<Long, List<String>>>>,
     showHistoryWindow: MutableState<Boolean>
 
 ) {

@@ -8,6 +8,7 @@ import java.io.InputStreamReader
 
 object Buttons {
     private var process: Process? = null
+    private var isAborted: Boolean = false
 
     fun executeScript(
         script: String,
@@ -15,12 +16,14 @@ object Buttons {
         isRunning: MutableState<Boolean>,
         lastExitCode: MutableState<Int?>,
         executionTime: MutableState<String>,
-        executionHistory: MutableState<MutableList<String>>
+        executionHistory: MutableState<MutableList<Pair<Long, List<String>>>>
     ) {
+        isAborted = false
 
         if (script.isBlank()) {
-            outputText.value = "Your script is empty! Please enter a valid Kotlin script."
-            executionHistory.value.add(outputText.value + "\n")
+            val errorBlank = "Your script is empty! Please enter a valid Kotlin script.\n"
+            outputText.value = errorBlank
+            executionHistory.value.add(Pair(System.currentTimeMillis(), listOf(errorBlank)))
             return
         }
         outputText.value = ""
@@ -59,6 +62,7 @@ object Buttons {
                     val timeout = 60000L
 
                     while (reader.readLine().also { line = it } != null) {
+                        if (isAborted) break
                         outputText.value += line + "\n"
 
                         if (System.currentTimeMillis() - startTime >= timeout) {
@@ -67,49 +71,55 @@ object Buttons {
                             break
                         }
                     }
+                    val scriptMessages = mutableListOf<String>()
 
                     if (processTimedOut) {
+                        val timeoutMessage = "Script executed for more than 60 seconds."
                         outputText.value +=
-                            "\nScript executed for more than 60 seconds.\n"
-                        executionHistory.value.add("Script executed for more than 60 seconds.\n")
+                            "\n$timeoutMessage\n"
+                        scriptMessages.add(timeoutMessage)
                         isRunning.value = false
-                    } else {
+                    } else if (!isAborted){
                         val exitCode = process?.waitFor()
                         isRunning.value = false
                         lastExitCode.value = exitCode
 
-
-                        outputText.value += "\n"
-                        outputText.value += "Script finished with exit code: $exitCode\n"
-                        executionHistory.value.add("Script finished with exit code: $exitCode")
+                        val exitCodeMessage = "Script finished with exit code: $exitCode"
+                        outputText.value += "\n$exitCodeMessage\n"
+                        scriptMessages.add(exitCodeMessage)
 
                         if (exitCode == 0) {
                             val endTime = System.currentTimeMillis()
                             val duration = endTime - startTime
                             val seconds = duration / 1000
                             val milliseconds = duration % 1000
-                            outputText.value += "\nExecution time: ${seconds}s ${milliseconds}ms\n"
-                            executionHistory.value.add("Execution time: ${seconds}s ${milliseconds}ms")
+                            val executionTimeMessage = "Execution time: ${seconds}s ${milliseconds}ms"
+                            outputText.value += "\n$executionTimeMessage\n"
+                            scriptMessages.add(executionTimeMessage)
                         }
 
                         var scriptSizeString = ""
                          scriptSizeString += when {
-                            scriptSize.toInt() == 1 -> "Temporary script file size: $scriptSize byte\n"
-                            scriptSize < 1024 -> "Temporary script file size: $scriptSize bytes\n"
-                            else -> "Temporary script file size: %.2f KB\n".format(scriptSizeKB)
+                            scriptSize.toInt() == 1 -> "Temporary script file size: $scriptSize byte"
+                            scriptSize < 1024 -> "Temporary script file size: $scriptSize bytes"
+                            else -> "Temporary script file size: %.2f KB".format(scriptSizeKB)
                         }
-                        outputText.value += scriptSizeString
-                        executionHistory.value.add(scriptSizeString)
 
+                        outputText.value += "\n$scriptSizeString\n"
+                        scriptMessages.add(scriptSizeString)
                     }
 
+                    if(!isAborted){
+                        executionHistory.value.add(Pair(startTime, scriptMessages))
+                    }
                 } catch (e: Exception) {
                         e.printStackTrace()
                         isRunning.value = false
                         lastExitCode.value = -1
                         executionTime.value = ""
-                        outputText.value = "Error: ${e.message}"
-                        executionHistory.value.add("Error: ${e.message}\n")
+                        val errorMessage = "Error: ${e.message}"
+                        outputText.value = errorMessage
+                        executionHistory.value.add(Pair(System.currentTimeMillis(), listOf(errorMessage)))
                     } finally {
                         scriptFile.delete()
                     }
@@ -120,22 +130,25 @@ object Buttons {
                 isRunning.value = false
                 lastExitCode.value = -1
                 executionTime.value = ""
-                outputText.value = "Error: ${e.message}"
-                executionHistory.value.add("Error: ${e.message}\n")
+                val errorMessage = "Error: ${e.message}"
+                outputText.value = errorMessage
+                executionHistory.value.add(Pair(System.currentTimeMillis(), listOf(errorMessage)))
             }
     }
 
     fun abortExecution(
         outputText: MutableState<String>,
         isRunning: MutableState<Boolean>,
-        executionHistory: MutableState<MutableList<String>>
+        executionHistory: MutableState<MutableList<Pair<Long, List<String>>>>
     ){
         if(process!= null && process!!.isAlive) {
             process?.destroy()
             process = null
+            isAborted = true
             isRunning.value = false
-            outputText.value += "\nExecution aborted.\n"
-            executionHistory.value.add("Execution aborted.")
+            val abortMessage = "Execution aborted."
+            outputText.value += "\n$abortMessage\n"
+            executionHistory.value.add(Pair(System.currentTimeMillis(), listOf(abortMessage)))
         }
     }
 }

@@ -25,7 +25,7 @@ fun main() = application {
     val executionTime = mutableStateOf("")
     val showEditor = remember { mutableStateOf(false) }
     val showHomePage = remember { mutableStateOf(true) }
-    val executionHistory = remember { mutableStateOf(mutableListOf<String>()) }
+    val executionHistory = remember { mutableStateOf(mutableListOf<Pair<Long, List<String>>>()) }
     val showHistoryWindow = mutableStateOf(false)
 
 

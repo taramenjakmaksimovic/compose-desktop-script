@@ -18,12 +18,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 @Composable
 fun executionHistoryWindow(
     showHistoryWindow: MutableState<Boolean>,
-    executionHistory: MutableState<MutableList<String>>
+    executionHistory: MutableState<MutableList<Pair<Long, List<String>>>>
 ) {
     if (showHistoryWindow.value) {
         Window(
@@ -62,8 +64,24 @@ fun executionHistoryWindow(
                                 .fillMaxHeight(0.8f)
                                 .verticalScroll(rememberScrollState())
                         ) {
-                            executionHistory.value.forEach { item ->
-                                Text(item, color = DarkPurple)
+                            executionHistory.value.forEachIndexed { index, (timestamp,items) ->
+                                val formattedTime = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
+                                    .format(Date(timestamp))
+                                Text(
+                                    formattedTime,
+                                    color = LightPurple
+                                )
+                                items.forEach{ item ->
+                                    Text(
+                                        item,
+                                        color = DarkPurple
+                                    )
+                                }
+                                if (index < executionHistory.value.lastIndex) {
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Divider()
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                }
                             }
                         }
                     }
