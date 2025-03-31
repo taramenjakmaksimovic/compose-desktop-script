@@ -4,12 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -25,7 +21,8 @@ import java.util.*
 @Composable
 fun executionHistoryWindow(
     showHistoryWindow: MutableState<Boolean>,
-    executionHistory: MutableState<MutableList<Pair<Long, List<String>>>>
+    executionHistory: MutableState<MutableList<Pair<Long, List<String>>>>,
+    isRunning: MutableState<Boolean>
 ) {
     if (showHistoryWindow.value) {
         Window(
@@ -37,6 +34,14 @@ fun executionHistoryWindow(
                 height = 600.dp
             )
         ) {
+            val historyState = remember { mutableStateOf(executionHistory.value) }
+            val isScriptRunning = remember { mutableStateOf(isRunning.value) }
+
+            LaunchedEffect(isRunning.value, executionHistory.value){
+                isScriptRunning.value = isRunning.value
+                historyState.value = executionHistory.value.toMutableList()
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -55,6 +60,14 @@ fun executionHistoryWindow(
                         color = DarkPurple
                     )
                     Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    if(isRunning.value){
+                        CircularProgressIndicator(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            color = DarkPurple
+                        )
+                    }
 
                     if (executionHistory.value.isEmpty()) {
                         Text("No history available.", color = Color.Gray)

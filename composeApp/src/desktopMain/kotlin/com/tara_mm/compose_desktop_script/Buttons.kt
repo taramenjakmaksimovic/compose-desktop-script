@@ -23,7 +23,9 @@ object Buttons {
         if (script.isBlank()) {
             val errorBlank = "Your script is empty! Please enter a valid Kotlin script.\n"
             outputText.value = errorBlank
-            executionHistory.value.add(Pair(System.currentTimeMillis(), listOf(errorBlank)))
+            executionHistory.value = executionHistory.value.toMutableList().apply {
+                add(Pair(System.currentTimeMillis(), listOf(errorBlank)))
+            }
             return
         }
         outputText.value = ""

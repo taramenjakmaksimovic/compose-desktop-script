@@ -499,7 +499,7 @@ fun outputPane(
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
-        executionHistoryWindow(showHistoryWindow, executionHistory)
+        executionHistoryWindow(showHistoryWindow, executionHistory, isRunning)
     }
 }
 
