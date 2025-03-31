@@ -63,7 +63,9 @@ fun executionHistoryWindow(
 
                     if(isRunning.value){
                         CircularProgressIndicator(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .size(70.dp)
                                 .padding(vertical = 8.dp),
                             color = DarkPurple
                         )
