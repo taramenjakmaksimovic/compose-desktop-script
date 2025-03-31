@@ -34,7 +34,7 @@ fun main() = application {
             onCloseRequest = ::exitApplication,
             title = "ComposeDesktopScript Home",
             state = WindowState(
-                position = WindowPosition(500.dp, 250.dp),
+                position = WindowPosition(Alignment.Center),
                 width = 500.dp,
                 height = 500.dp
             )
@@ -87,7 +87,7 @@ fun main() = application {
     {
         Window(
            onCloseRequest = ::exitApplication,
-            title = "ComposeDesktopScript",
+            title = "ComposeDesktopScript editor pane",
             state = WindowState(position = WindowPosition(100.dp, 100.dp), width = 500.dp, height = 600.dp)
         ) {
             editorPane(
@@ -115,7 +115,7 @@ fun main() = application {
 
         Window(
             onCloseRequest = ::exitApplication,
-            title = "ComposeDesktopScriptOutput",
+            title = "ComposeDesktopScript output pane",
             state = WindowState(position = WindowPosition(650.dp, 100.dp), width = 500.dp, height = 600.dp)
         ) {
             outputPane(
