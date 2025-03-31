@@ -262,6 +262,7 @@ fun editorPane(
             }
             Button(
                 onClick = {
+                saveUndoState()
                 editorText.value = ""
                 outputText.value = ""
                 textFieldValue.value = TextFieldValue("")
