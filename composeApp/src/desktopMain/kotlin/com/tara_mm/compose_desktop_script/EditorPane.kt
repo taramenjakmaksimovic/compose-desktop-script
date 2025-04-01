@@ -74,28 +74,37 @@ fun editorPane(
         }
     }
 
-    LaunchedEffect(cursorPosition.value) {
-        val (line, error) = cursorPosition.value
-        if (line > 0) {
-            val lines = editorText.value.lines()
-            if (line <= lines.size) {
-                var offset = 0
-                for (i in 0 until line - 1) {
-                    offset += lines[i].length + 1
-                }
+    fun matchKeyword(textValue: String, currentIndex: Int, keywords: List<String>): Pair<String, Int>?{
+        for (keyword in keywords){
+            val regex = "\\b$keyword\\b".toRegex()
+            val match = regex.find(textValue,currentIndex)
 
-                if (error is Int) {
-                    textFieldValue.value = textFieldValue.value.copy(selection = TextRange(offset, offset))
-                } else if (error is String) {
-                    errorMessages.value = errorMessages.value.toMutableMap().apply {
-                        this[line] = error
-                    }
-                }
-                errorLine.value = line
+            if (match != null && match.range.first == currentIndex){
+                val endIndex = currentIndex + keyword.length
+                return textValue.substring(currentIndex, endIndex) to endIndex
             }
-        } else {
-            errorLine.value = -1
         }
+        return null
+    }
+
+    fun matchSingleLineComment(textValue: String, currentIndex: Int): Pair<String, Int>? {
+        val singleLineCommentMatch = "//.*".toRegex().find(textValue, currentIndex)
+
+        if (singleLineCommentMatch != null && singleLineCommentMatch.range.first == currentIndex) {
+            val endIndex = singleLineCommentMatch.range.last + 1
+            return textValue.substring(currentIndex, endIndex) to endIndex
+        }
+        return null
+    }
+
+    fun matchMultiLineComment(textValue: String, currentIndex: Int): Pair<String, Int>? {
+        val multiLineCommentMatch = "/\\*.*?\\*/".toRegex(RegexOption.DOT_MATCHES_ALL).find(textValue, currentIndex)
+
+        if (multiLineCommentMatch != null && multiLineCommentMatch.range.first == currentIndex) {
+            val endIndex = multiLineCommentMatch.range.last + 1
+            return textValue.substring(currentIndex, endIndex) to endIndex
+        }
+        return null
     }
 
     val visualTransformation = VisualTransformation { text ->
@@ -106,41 +115,30 @@ fun editorPane(
             while (currentIndex < textValue.length) {
                 var foundMatch = false
 
-                for (keyword in keywords) {
-                    val regex = "\\b$keyword\\b".toRegex()
-                    val match = regex.find(textValue, currentIndex)
-
-                    if (match != null && match.range.first == currentIndex) {
-                        val endIndex = currentIndex + keyword.length
-                        withStyle(style = SpanStyle(color = keywordColor, fontWeight = FontWeight.Bold)) {
-                            append(textValue.substring(currentIndex, endIndex))
-                        }
-                        currentIndex = endIndex
-                        foundMatch = true
-                        break
+                matchKeyword(textValue, currentIndex, keywords)?.let{
+                    withStyle(style = SpanStyle(color = keywordColor, fontWeight = FontWeight.Bold)) {
+                        append(it.first)
                     }
+                    currentIndex = it. second
+                    foundMatch = true
                 }
 
                 if (!foundMatch) {
-                    val singleLineCommentMatch = "//.*".toRegex().find(textValue, currentIndex)
-                    if (singleLineCommentMatch != null && singleLineCommentMatch.range.first == currentIndex) {
-                        val endIndex = singleLineCommentMatch.range.last + 1
+                    matchSingleLineComment(textValue, currentIndex)?.let {
                         withStyle(style = SpanStyle(color = commentColor, fontStyle = FontStyle.Italic)) {
-                            append(textValue.substring(currentIndex, endIndex))
+                            append(it.first)
                         }
-                        currentIndex = endIndex
+                        currentIndex = it.second
                         foundMatch = true
                     }
                 }
 
                 if (!foundMatch) {
-                    val multiLineCommentMatch = "/\\*.*?\\*/".toRegex(RegexOption.DOT_MATCHES_ALL).find(textValue, currentIndex)
-                    if (multiLineCommentMatch != null && multiLineCommentMatch.range.first == currentIndex) {
-                        val endIndex = multiLineCommentMatch.range.last + 1
+                    matchMultiLineComment(textValue, currentIndex)?.let {
                         withStyle(style = SpanStyle(color = commentColor, fontStyle = FontStyle.Italic)) {
-                            append(textValue.substring(currentIndex, endIndex))
+                            append(it.first)
                         }
-                        currentIndex = endIndex
+                        currentIndex = it.second
                         foundMatch = true
                     }
                 }
@@ -151,7 +149,6 @@ fun editorPane(
                 }
             }
         }
-
         TransformedText(newString, OffsetMapping.Identity)
     }
 
