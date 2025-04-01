@@ -64,7 +64,10 @@ object Buttons {
                     val timeout = 60000L
 
                     while (reader.readLine().also { line = it } != null) {
-                        if (isAborted) break
+                        if (isAborted) {
+                            process?.destroy()
+                            break
+                        }
                         outputText.value += line + "\n"
 
                         if (System.currentTimeMillis() - startTime >= timeout) {
@@ -83,7 +86,6 @@ object Buttons {
                         isRunning.value = false
                     } else if (!isAborted){
                         val exitCode = process?.waitFor()
-                        isRunning.value = false
                         lastExitCode.value = exitCode
 
                         val exitCodeMessage = "Script finished with exit code: $exitCode"
@@ -123,7 +125,9 @@ object Buttons {
                         outputText.value = errorMessage
                         executionHistory.value.add(Pair(System.currentTimeMillis(), listOf(errorMessage)))
                     } finally {
+                        isRunning.value = false
                         scriptFile.delete()
+                        process = null
                     }
                 }.start()
 
@@ -143,10 +147,10 @@ object Buttons {
         isRunning: MutableState<Boolean>,
         executionHistory: MutableState<MutableList<Pair<Long, List<String>>>>
     ){
-        if(process!= null && process!!.isAlive) {
+        if(process?.isAlive == true) {
+            isAborted = true
             process?.destroy()
             process = null
-            isAborted = true
             isRunning.value = false
             val abortMessage = "Execution aborted."
             outputText.value += "\n$abortMessage\n"
