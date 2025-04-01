@@ -59,7 +59,11 @@ fun executionHistoryWindow(
                         fontWeight = FontWeight.Bold,
                         color = DarkPurple
                     )
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    Divider(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        color = DarkPurple,
+                        thickness = 2.dp
+                    )
 
                     if(isRunning.value){
                         CircularProgressIndicator(
@@ -69,6 +73,7 @@ fun executionHistoryWindow(
                                 .padding(vertical = 8.dp),
                             color = DarkPurple
                         )
+                        Spacer(modifier = Modifier.height(20.dp))
                     }
 
                     if (executionHistory.value.isEmpty()) {

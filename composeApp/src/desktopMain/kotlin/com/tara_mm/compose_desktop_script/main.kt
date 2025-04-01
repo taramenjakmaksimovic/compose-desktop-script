@@ -6,15 +6,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
 import com.tara_mm.compose_desktop_script.Buttons.executeScript
+import kotlinx.coroutines.delay
 
 fun main() = application {
     val scriptText = mutableStateOf("")
@@ -129,4 +130,28 @@ fun main() = application {
             )
         }
     }
+}
+
+@Composable
+fun animationText(
+    inputText: String,
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit,
+    color: Color,
+    typingSpeed: Long
+){
+    var visibleText by remember { mutableStateOf("") }
+    LaunchedEffect(inputText){
+        visibleText= ""
+        for(i in inputText.indices){
+            visibleText = inputText.substring(0, i + 1)
+            delay(typingSpeed)
+        }
+    }
+    Text(
+        text = visibleText,
+        fontSize = fontSize,
+        color = color,
+        modifier = modifier
+    )
 }
