@@ -1,0 +1,5 @@
+val number = 5
+
+val text = "The number is: " + number
+
+val result = text.toInt()

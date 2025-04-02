@@ -106,6 +106,8 @@ fun outputPane(
                             color = when {
                                 line == "Your script is empty! Please enter a valid Kotlin script." ||
                                         line == "Execution aborted." ||
+                                        line.contains("java") ||
+                                        line.contains("foo") ||
                                         line == "Script executed for more than 60 seconds." -> Color.Red
 
                                 line.startsWith("Script finished with exit code:") ||
@@ -116,6 +118,8 @@ fun outputPane(
                             },
                             fontWeight = when {
                                 line == "Your script is empty! Please enter a valid Kotlin script." ||
+                                        line.contains("java") ||
+                                        line.contains("foo") ||
                                         line == "Execution aborted." ||
                                         line == "Script executed for more than 60 seconds." -> FontWeight.Bold
 
