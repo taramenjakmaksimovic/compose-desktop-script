@@ -5,6 +5,22 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 
+private fun catchError(
+    e: Exception,
+    outputText: MutableState<String>,
+    executionHistory: MutableState<MutableList<Pair<Long, List<String>>>>,
+    isRunning: MutableState<Boolean>,
+    lastExitCode: MutableState<Int?>,
+    executionTime: MutableState<String>
+) {
+    e.printStackTrace()
+    isRunning.value = false
+    lastExitCode.value = -1
+    executionTime.value = ""
+    val errorMessage = "Error: ${e.message}"
+    outputText.value = errorMessage
+    executionHistory.value.add(Pair(System.currentTimeMillis(), listOf(errorMessage)))
+}
 
 object Buttons {
     private var process: Process? = null
@@ -117,13 +133,8 @@ object Buttons {
                         executionHistory.value.add(Pair(startTime, scriptMessages))
                     }
                 } catch (e: Exception) {
-                        e.printStackTrace()
-                        isRunning.value = false
-                        lastExitCode.value = -1
-                        executionTime.value = ""
-                        val errorMessage = "Error: ${e.message}"
-                        outputText.value = errorMessage
-                        executionHistory.value.add(Pair(System.currentTimeMillis(), listOf(errorMessage)))
+                    catchError(e, outputText, executionHistory, isRunning, lastExitCode, executionTime)
+
                     } finally {
                         isRunning.value = false
                         scriptFile.delete()
@@ -132,13 +143,7 @@ object Buttons {
                 }.start()
 
             } catch (e: Exception) {
-                e.printStackTrace()
-                isRunning.value = false
-                lastExitCode.value = -1
-                executionTime.value = ""
-                val errorMessage = "Error: ${e.message}"
-                outputText.value = errorMessage
-                executionHistory.value.add(Pair(System.currentTimeMillis(), listOf(errorMessage)))
+                catchError(e, outputText, executionHistory, isRunning, lastExitCode, executionTime)
             }
     }
 

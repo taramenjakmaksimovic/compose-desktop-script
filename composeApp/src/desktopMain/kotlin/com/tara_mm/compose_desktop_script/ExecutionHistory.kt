@@ -91,12 +91,29 @@ fun executionHistoryWindow(
                                     formattedTime,
                                     color = LightPurple
                                 )
-                                items.forEach{ item ->
-                                    Text(
-                                        item,
-                                        color = DarkPurple
-                                    )
+
+                                items.forEach { item ->
+                                    if (item.contains("Script finished with exit code:")) {
+                                        val exitcode = item.split(":").last().trim().toIntOrNull()
+                                        if (exitcode != null && exitcode != 0) {
+                                            Text(
+                                                item,
+                                                color = Color.Red
+                                            )
+                                        } else {
+                                            Text(
+                                                item,
+                                                color = DarkPurple
+                                            )
+                                        }
+                                    } else {
+                                        Text(
+                                            item,
+                                            color = DarkPurple
+                                        )
+                                    }
                                 }
+
                                 if (index < executionHistory.value.lastIndex) {
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Divider()
