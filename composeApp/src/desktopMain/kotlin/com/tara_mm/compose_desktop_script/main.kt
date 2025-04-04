@@ -52,7 +52,7 @@ fun main() = application {
                     modifier = Modifier.padding(bottom = 48.dp),
                     fontSize = 25.sp,
                     color = Color.White,
-                    typingSpeed = 70L
+                    typingSpeed = 45L
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 Row(

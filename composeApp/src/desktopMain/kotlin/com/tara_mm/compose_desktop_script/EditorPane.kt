@@ -36,12 +36,14 @@ fun editorPane(
     val scrollState = rememberScrollState()
     val showExitDialog = remember { mutableStateOf(false) }
     val keywords = listOf(
-        "val", "var", "fun", "class",
-        "if", "else", "while", "for", "when",
-        "return", "try", "catch",
-        "throw", "package", "import",
-        "finally", "private", "public",
-        "object", "null", "do",
+        "val", "var", "fun",
+        "class", "object", "this", "super",
+        "if", "else", "for", "in", "when",
+        "return", "try",
+        "catch", "throw", "finally",
+        "package", "import",
+        "private", "protected", "public",
+        "null", "do",
         "while", "break", "continue"
     )
     val keywordColor = Purple
