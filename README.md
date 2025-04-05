@@ -26,14 +26,16 @@ A script editor and execution tool made using Jetpack Compose for Desktop.
 ### Installation  
 
 1. **Clone the Repository**:
-   ```bash  
-   git clone https://github.com/taramenjakmaksimovic/compose-desktop-script.git
+```bash  
+git clone https://github.com/taramenjakmaksimovic/compose-desktop-script.git
+```
 2. **Open in Intellij IDEA**: <br>
  Navigate to the cloned directory and select "Open".
 3. **Run the project**: <br>
 Open the terminal in IntelliJ IDEA and run:
- ```bash 
- ./gradlew run
+```bash 
+./gradlew run
+```
 
 
 
